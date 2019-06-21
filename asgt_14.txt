@@ -1,0 +1,124 @@
+===========================================================================================
+NAME     : Sharvari S. Wagh
+CLASS    : TE(A)
+ROLL NO. : 75
+=============================================================================================
+Assignment no:14
+---------------------------------------------------------------------------------------------
+Create a database schema with the following table
+      Stud-Marks(Roll, name, total_marks)
+      Result(Roll,Name,Class).
+1.Write a PL/ pgSQL procedure  to accept input from user to enter records into Stud_Marks table.
+2.Write a PLSQL function  to calculate Class of the student and to enter into the Result table if the total_Marks is passed as a argument.Use the following rules to determine the class of the student.
+a.If total_marks <=1500 and marks>=990 then distinction
+b.If marks between  900 and 989 then first class
+c.If marks between 825 and 899 then Higher Second class
+
+Software Required: Ubuntu,Postgres.
+
+---------------------------------------------------------------------------------------------
+unix@unix-HP-dx2480-MT-KL969AV:~$ sudo -i -u postgres
+[sudo] password for unix: 
+postgres@unix-HP-dx2480-MT-KL969AV:~$ psql
+psql (9.5.14)
+Type "help" for help.
+
+postgres=# create database myd;
+CREATE DATABASE
+postgres=# \c myd
+You are now connected to database "myd" as user "postgres".
+myd=# create table stud_marks(roll integer,name varchar(20),total_marks integer);
+CREATE TABLE
+myd=# create table result(roll integer,total_marks integer,gr varchar(20));CREATE TABLE
+myd=# select ins(1,'ansh',1100);
+ERROR:  function ins(integer, unknown, integer) does not exist
+LINE 1: select ins(1,'ansh',1100);
+               ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+myd=# \i /home/unix/Desktop/try.sql
+CREATE FUNCTION
+myd=# select ins(1,'ansh',1100);
+ ins 
+-----
+ 
+(1 row)
+
+myd=# select * from result;
+ roll | total_marks |     gr      
+------+-------------+-------------
+    1 |        1100 | distinction
+(1 row)
+
+myd=# select ins(2,'raj',830);
+ ins 
+-----
+ 
+(1 row)
+
+myd=# select * from result;
+ roll | total_marks |         gr          
+------+-------------+---------------------
+    1 |        1100 | distinction
+    2 |         830 | higher second class
+(2 rows)
+
+myd=# select ins(3,'daksh',920);
+ ins 
+-----
+ 
+(1 row)
+
+myd=# select * from result;
+ roll | total_marks |         gr          
+------+-------------+---------------------
+    1 |        1100 | distinction
+    2 |         830 | higher second class
+    3 |         920 | first class
+(3 rows)
+
+myd=# select * from stud_marks;
+ roll | name  | total_marks 
+------+-------+-------------
+    1 | ansh  |        1100
+    2 | raj   |         830
+    3 | daksh |         920
+(3 rows)
+
+myd=# select * from result;
+ roll | total_marks |         gr          
+------+-------------+---------------------
+    1 |        1100 | distinction
+    2 |         830 | higher second class
+    3 |         920 | first class
+(3 rows)
+
+myd=# 
+
+=============================================================================================
+CODE:
+----------------------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION ins(roll integer,name varchar(20),total_marks integer)
+RETURNS VOID AS $$
+
+BEGIN
+
+insert into stud_marks values(roll,name,total_marks);
+
+	IF (total_marks<=1500 AND total_marks>=990) THEN
+
+	insert into result values(roll,total_marks,'distinction');
+	
+	ELSIF (total_marks<=989 AND total_marks>=900) THEN
+	
+	insert into result values(roll,total_marks,'first class');
+	
+	ELSIF (total_marks<=899 AND total_marks>=825) THEN
+	
+	insert into result values(roll,total_marks,'higher second class');
+
+	END IF;
+
+END
+
+$$LANGUAGE plpgsql
+============================================================================================
